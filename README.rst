@@ -1,3 +1,4 @@
+Timer and it's interruption is added now.
 
 This is my fixed/expanded version of the original Rtc_Pcf8563 library for Arduino.
 All credits go to the original authors.
