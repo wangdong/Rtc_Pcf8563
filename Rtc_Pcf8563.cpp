@@ -299,6 +299,34 @@ void Rtc_Pcf8563::clearAlarm()
     Wire.endTransmission();
 }
 
+
+/**
+* Setup the timer
+*/
+void Rtc_Pcf8563::setCountdownTimer(byte frequency, byte count, bool withInterruption)
+{
+    status2 &= ~(RTCC_ALARM_TF | RTCC_ALARM_TIE);
+    if (withInterruption)
+        status2 |= RTCC_ALARM_TIE;
+
+    Wire.beginTransmission(Rtcc_Addr);    // Issue I2C start signal
+    Wire.write((byte)RTCC_STAT2_ADDR);    // Clear TF and/or enable the timer interruption
+    Wire.write((byte)status2);
+    Wire.endTransmission();
+
+    Wire.beginTransmission(Rtcc_Addr);    // Issue I2C start signal
+    Wire.write((byte)RTCC_TIMER_CONTROL_ADDR);
+    Wire.write((byte)frequency);
+    Wire.write((byte)count);
+    Wire.endTransmission();
+}
+
+void Rtc_Pcf8563::clearCountdownTimer()
+{
+    setCountdownTimer(TIMER_DISABLE, 0, false);
+}
+
+
 void Rtc_Pcf8563::getDate()
 {
     /* set the start byte of the date data */

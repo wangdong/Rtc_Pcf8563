@@ -53,6 +53,8 @@
 #define RTCC_YEAR_ADDR 			0x08
 #define RTCC_ALRM_MIN_ADDR 	    0x09
 #define RTCC_SQW_ADDR 	        0x0D
+#define RTCC_TIMER_CONTROL_ADDR 0x0E
+#define RTCC_TIMER_ADDR   		0x0F
 
 /* setting the alarm flag to 0 enables the alarm.
  * set it to 1 to disable the alarm for that value.
@@ -73,6 +75,11 @@
 #define RTCC_TIME_HMS				0x01
 #define RTCC_TIME_HM				0x02
 
+/* timer flags */
+#define RTCC_ALARM_TIE 			0x01
+#define RTCC_ALARM_TF 			0x04 // here is 0x04 :)
+
+
 /* square wave contants */
 #define SQW_DISABLE     B00000000
 #define SQW_32KHZ       B10000000
@@ -80,6 +87,12 @@
 #define SQW_32HZ        B10000010
 #define SQW_1HZ         B10000011
 
+/* timer constants */
+#define TIMER_DISABLE		B00000000
+#define TIMER_4KHZ			B10000000
+#define TIMER_64HZ			B10000001
+#define TIMER_1HZ			B10000010
+#define TIMER_EVERY_MINUTE	B10000011	// 1/60Hz
 
 /* arduino class */
 class Rtc_Pcf8563 {
@@ -102,8 +115,12 @@ class Rtc_Pcf8563 {
 		void setAlarm(byte min, byte hour, byte day, byte weekday); /* set alarm vals, 99=ignore */
 		void clearAlarm();	/* clear alarm flag and interrupt */
 		void resetAlarm();  /* clear alarm flag but leave interrupt unchanged */
+
 		void setSquareWave(byte frequency);
 		void clearSquareWave();
+
+		void setCountdownTimer(byte frequency, byte count, bool withInterruption = false);
+		void clearCountdownTimer(); /* setCountdownTimer also clears last timer  */
 
 		byte getSecond();
 		byte getMinute();
