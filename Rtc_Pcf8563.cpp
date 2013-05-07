@@ -41,21 +41,21 @@ void Rtc_Pcf8563::initClock()
   Wire.beginTransmission(Rtcc_Addr);    // Issue I2C start signal
   Wire.write((byte)0x0);        // start address
 
-  Wire.write((byte)0x0);     //control/status1
-  Wire.write((byte)0x0);     //control/status2
-  Wire.write((byte)0x01);     //set seconds
+  Wire.write((byte)0x00);    //control/status1
+  Wire.write((byte)0x00);    //control/status2
+  Wire.write((byte)0x01);    //set seconds
   Wire.write((byte)0x01);    //set minutes
   Wire.write((byte)0x01);    //set hour
   Wire.write((byte)0x01);    //set day
   Wire.write((byte)0x01);    //set weekday
-  Wire.write((byte)0x01);     //set month, century to 1
+  Wire.write((byte)0x01);    //set month, century to 1
   Wire.write((byte)0x01);    //set year to 99
   Wire.write((byte)0x80);    //minute alarm value reset to 00
   Wire.write((byte)0x80);    //hour alarm value reset to 00
   Wire.write((byte)0x80);    //day alarm value reset to 00
   Wire.write((byte)0x80);    //weekday alarm value reset to 00
-  Wire.write((byte)0x0);     //set SQW, see: setSquareWave
-  Wire.write((byte)0x0);     //timer off
+  Wire.write((byte)0x00);    //set SQW, see: setSquareWave
+  Wire.write((byte)0x00);    //timer off
   Wire.endTransmission();
 
 }
@@ -324,7 +324,8 @@ byte Rtc_Pcf8563::getTimer()
 
 void Rtc_Pcf8563::setTimer(byte frequency, byte count, bool enableInterruption)
 {
-    status2 &= ~(RTCC_ALARM_TF | RTCC_ALARM_TIE);
+    status2 &= ~RTCC_ALARM_TF;
+    status2 &= ~RTCC_ALARM_TIE;
     if (enableInterruption)
         status2 |= RTCC_ALARM_TIE;
 

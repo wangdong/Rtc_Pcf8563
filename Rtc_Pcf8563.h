@@ -148,7 +148,7 @@ public:
     boolean timerActive();
     boolean timerEnabled();
 
-    void setTimer(byte frequency, byte count, bool enableInterruption = false);
+    void setTimer(byte frequency, byte count, bool enableInterruption = true);
     void clearTimer(); /* setCountdownTimer will also clears last timer  */
 
     byte getTimerFrequency();
