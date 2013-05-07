@@ -21,7 +21,6 @@
  *    x Add Euro date format
  *    Add short time (hh:mm) format
  *    Add 24h/12h format
- *    Add timer support
  ******
  *  Robodoc embedded documentation.
  *  http://www.xs4all.nl/~rfsber/Robo/robodoc.html
@@ -303,10 +302,30 @@ void Rtc_Pcf8563::clearAlarm()
 /**
 * Setup the timer
 */
-void Rtc_Pcf8563::setCountdownTimer(byte frequency, byte count, bool withInterruption)
+byte Rtc_Pcf8563::getTimerFrequency() 
+{
+    Wire.beginTransmission(Rtcc_Addr);
+    Wire.write((byte)RTCC_TIMER_CONTROL_ADDR);
+    Wire.endTransmission();
+
+    Wire.requestFrom(Rtcc_Addr, 1);
+    return Wire.read();
+}
+
+byte Rtc_Pcf8563::getTimer() 
+{
+    Wire.beginTransmission(Rtcc_Addr);
+    Wire.write((byte)RTCC_TIMER_ADDR);
+    Wire.endTransmission();
+
+    Wire.requestFrom(Rtcc_Addr, 1);
+    return Wire.read();
+}
+
+void Rtc_Pcf8563::setTimer(byte frequency, byte count, bool enableInterruption)
 {
     status2 &= ~(RTCC_ALARM_TF | RTCC_ALARM_TIE);
-    if (withInterruption)
+    if (enableInterruption)
         status2 |= RTCC_ALARM_TIE;
 
     Wire.beginTransmission(Rtcc_Addr);    // Issue I2C start signal
@@ -321,11 +340,21 @@ void Rtc_Pcf8563::setCountdownTimer(byte frequency, byte count, bool withInterru
     Wire.endTransmission();
 }
 
-void Rtc_Pcf8563::clearCountdownTimer()
+void Rtc_Pcf8563::clearTimer()
 {
-    setCountdownTimer(TIMER_DISABLE, 0, false);
+    setTimer(TIMER_DISABLE, 0, false);
 }
 
+
+boolean Rtc_Pcf8563::timerActive()
+{
+    return Rtc_Pcf8563::readStatus2() & RTCC_ALARM_TF;
+}
+
+boolean Rtc_Pcf8563::timerEnabled()
+{
+    return Rtc_Pcf8563::readStatus2() & RTCC_ALARM_TIE;
+}
 
 void Rtc_Pcf8563::getDate()
 {
@@ -523,3 +552,9 @@ byte Rtc_Pcf8563::getStatus1() {
 byte Rtc_Pcf8563::getStatus2() {
     return status2;
 }
+
+
+//
+// END OF FILE
+//
+
